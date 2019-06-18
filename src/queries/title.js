@@ -1,3 +1,4 @@
+import {prepareContainer} from '../prepare-container'
 import {
   fuzzyMatches,
   matches,
@@ -13,7 +14,9 @@ function queryAllByTitle(
 ) {
   const matcher = exact ? matches : fuzzyMatches
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
-  return Array.from(container.querySelectorAll('[title], svg > title')).filter(
+  return Array.from(
+    prepareContainer(container).querySelectorAll('[title], svg > title'),
+  ).filter(
     node =>
       matcher(node.getAttribute('title'), node, text, matchNormalizer) ||
       matcher(getNodeText(node), node, text, matchNormalizer),

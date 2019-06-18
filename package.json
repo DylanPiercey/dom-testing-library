@@ -3,6 +3,11 @@
   "version": "0.0.0-semantically-released",
   "description": "Simple and complete DOM testing utilities that encourage good testing practices.",
   "main": "dist/index.js",
+  "browser": {
+    "dist/index.js": "dist/index-browser.js",
+    "dist/@testing-library/dom.esm.js": "dist/@testing-library/dom-browser.esm.js",
+    "dist/@testing-library/dom.umd.js": "dist/@testing-library/dom-browser.umd.js"
+  },
   "module": "dist/@testing-library/dom.esm.js",
   "umd:main": "dist/@testing-library/dom.umd.js",
   "source": "src/index.js",
@@ -45,11 +50,13 @@
     "@babel/runtime": "^7.4.5",
     "@sheerun/mutationobserver-shim": "^0.3.2",
     "aria-query": "3.0.0",
+    "jsdom": "^15.1.1",
     "pretty-format": "^24.8.0",
     "wait-for-expect": "^1.2.0"
   },
   "devDependencies": {
     "dtslint": "^0.7.7",
+    "enhanced-resolve-jest": "^1.0.0",
     "jest-dom": "^3.4.0",
     "jest-in-case": "^1.0.2",
     "kcd-scripts": "^1.4.0"

@@ -1,3 +1,4 @@
+import {prepareContainer} from '../prepare-container'
 import {matches, fuzzyMatches, makeNormalizer, buildQueries} from './all-utils'
 
 function queryAllByAltText(
@@ -7,7 +8,9 @@ function queryAllByAltText(
 ) {
   const matcher = exact ? matches : fuzzyMatches
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
-  return Array.from(container.querySelectorAll('img,input,area')).filter(node =>
+  return Array.from(
+    prepareContainer(container).querySelectorAll('img,input,area'),
+  ).filter(node =>
     matcher(node.getAttribute('alt'), node, alt, matchNormalizer),
   )
 }

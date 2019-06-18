@@ -1,3 +1,4 @@
+import {prepareContainer} from '../prepare-container'
 import {
   getNodeText,
   matches,
@@ -13,20 +14,20 @@ function queryAllByDisplayValue(
 ) {
   const matcher = exact ? matches : fuzzyMatches
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
-  return Array.from(container.querySelectorAll(`input,textarea,select`)).filter(
-    node => {
-      if (node.tagName === 'SELECT') {
-        const selectedOptions = Array.from(node.options).filter(
-          option => option.selected,
-        )
-        return selectedOptions.some(optionNode =>
-          matcher(getNodeText(optionNode), optionNode, value, matchNormalizer),
-        )
-      } else {
-        return matcher(node.value, node, value, matchNormalizer)
-      }
-    },
-  )
+  return Array.from(
+    prepareContainer(container).querySelectorAll(`input,textarea,select`),
+  ).filter(node => {
+    if (node.tagName === 'SELECT') {
+      const selectedOptions = Array.from(node.options).filter(
+        option => option.selected,
+      )
+      return selectedOptions.some(optionNode =>
+        matcher(getNodeText(optionNode), optionNode, value, matchNormalizer),
+      )
+    } else {
+      return matcher(node.value, node, value, matchNormalizer)
+    }
+  })
 }
 
 const getMultipleError = (c, value) =>

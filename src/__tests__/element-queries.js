@@ -1,9 +1,9 @@
 import {configure} from '../config'
 import {render, renderIntoDocument} from './helpers/test-utils'
 
-beforeEach(() => {
-  document.defaultView.Cypress = null
-})
+// beforeEach(() => {
+//   document.defaultView.Cypress = null
+// })
 
 test('query can return null', () => {
   const {

@@ -1,3 +1,4 @@
+import {prepareContainer} from '../prepare-container'
 import {
   fuzzyMatches,
   matches,
@@ -16,9 +17,9 @@ function queryAllLabelsByText(
 ) {
   const matcher = exact ? matches : fuzzyMatches
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
-  return Array.from(container.querySelectorAll('label')).filter(label =>
-    matcher(label.textContent, label, text, matchNormalizer),
-  )
+  return Array.from(
+    prepareContainer(container).querySelectorAll('label'),
+  ).filter(label => matcher(label.textContent, label, text, matchNormalizer))
 }
 
 function queryAllByLabelText(
@@ -26,6 +27,7 @@ function queryAllByLabelText(
   text,
   {selector = '*', exact = true, collapseWhitespace, trim, normalizer} = {},
 ) {
+  container = prepareContainer(container)
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
   const labels = queryAllLabelsByText(container, text, {
     exact,
@@ -73,7 +75,9 @@ function queryAllByLabelText(
 
       // ARIA labels can label multiple elements
       const labelledNodes = Array.from(
-        container.querySelectorAll(`[aria-labelledby~="${labelId}"]`),
+        prepareContainer(container).querySelectorAll(
+          `[aria-labelledby~="${labelId}"]`,
+        ),
       )
 
       return allLabelledElements.concat(labelledNodes)
@@ -92,6 +96,7 @@ function queryAllByLabelText(
 // however, we can give a more helpful error message than the generic one,
 // so we're writing this one out by hand.
 function getAllByLabelText(container, text, ...rest) {
+  container = prepareContainer(container)
   const els = queryAllByLabelText(container, text, ...rest)
   if (!els.length) {
     const labels = queryAllLabelsByText(container, text, ...rest)

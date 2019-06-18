@@ -1,0 +1,5 @@
+{
+  "browser": {
+    "./test-utils.js": "./test-utils-browser.js"
+  }
+}

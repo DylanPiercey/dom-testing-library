@@ -1,6 +1,7 @@
 import {prettyDOM} from './pretty-dom'
 import {fuzzyMatches, matches, makeNormalizer} from './matches'
 import {waitForElement} from './wait-for-element'
+import {prepareContainer} from './prepare-container'
 
 /* eslint-disable complexity */
 function debugDOM(htmlElement) {
@@ -46,12 +47,15 @@ function queryAllByAttribute(
 ) {
   const matcher = exact ? matches : fuzzyMatches
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
-  return Array.from(container.querySelectorAll(`[${attribute}]`)).filter(node =>
+  return Array.from(
+    prepareContainer(container).querySelectorAll(`[${attribute}]`),
+  ).filter(node =>
     matcher(node.getAttribute(attribute), node, text, matchNormalizer),
   )
 }
 
 function queryByAttribute(attribute, container, text, ...args) {
+  container = prepareContainer(container)
   const els = queryAllByAttribute(attribute, container, text, ...args)
   if (els.length > 1) {
     throw getMultipleElementsFoundError(
@@ -67,6 +71,7 @@ function queryByAttribute(attribute, container, text, ...args) {
 // element or null
 function makeSingleQuery(allQuery, getMultipleError) {
   return (container, ...args) => {
+    container = prepareContainer(container)
     const els = allQuery(container, ...args)
     if (els.length > 1) {
       throw getMultipleElementsFoundError(
@@ -82,6 +87,7 @@ function makeSingleQuery(allQuery, getMultipleError) {
 // if an empty list of elements is returned
 function makeGetAllQuery(allQuery, getMissingError) {
   return (container, ...args) => {
+    container = prepareContainer(container)
     const els = allQuery(container, ...args)
     if (!els.length) {
       throw getElementError(getMissingError(container, ...args), container)
@@ -93,11 +99,13 @@ function makeGetAllQuery(allQuery, getMissingError) {
 // this accepts a getter query function and returns a function which calls
 // waitForElement and passing a function which invokes the getter.
 function makeFindQuery(getter) {
-  return (container, text, options, waitForElementOptions) =>
-    waitForElement(
+  return (container, text, options, waitForElementOptions) => {
+    container = prepareContainer(container)
+    return waitForElement(
       () => getter(container, text, options),
       waitForElementOptions,
     )
+  }
 }
 
 function buildQueries(queryAllBy, getMultipleError, getMissingError) {

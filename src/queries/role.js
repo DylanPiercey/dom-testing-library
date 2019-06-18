@@ -1,3 +1,4 @@
+import {prepareContainer} from '../prepare-container'
 import {buildQueries, fuzzyMatches, makeNormalizer, matches} from './all-utils'
 import {elementRoles} from 'aria-query'
 
@@ -55,19 +56,21 @@ function queryAllByRole(
     return []
   }
 
-  return Array.from(container.querySelectorAll('*')).filter(node => {
-    const isRoleSpecifiedExplicitly = node.hasAttribute('role')
+  return Array.from(prepareContainer(container).querySelectorAll('*')).filter(
+    node => {
+      const isRoleSpecifiedExplicitly = node.hasAttribute('role')
 
-    if (isRoleSpecifiedExplicitly) {
-      return matcher(node.getAttribute('role'), node, role, matchNormalizer)
-    }
+      if (isRoleSpecifiedExplicitly) {
+        return matcher(node.getAttribute('role'), node, role, matchNormalizer)
+      }
 
-    const implicitRoles = getImplicitAriaRole(node)
+      const implicitRoles = getImplicitAriaRole(node)
 
-    return implicitRoles.some(implicitRole =>
-      matcher(implicitRole, node, role, matchNormalizer),
-    )
-  })
+      return implicitRoles.some(implicitRole =>
+        matcher(implicitRole, node, role, matchNormalizer),
+      )
+    },
+  )
 }
 
 const getMultipleError = (c, id) => `Found multiple elements by [role=${id}]`

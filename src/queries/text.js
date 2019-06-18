@@ -1,3 +1,4 @@
+import {prepareContainer} from '../prepare-container'
 import {
   fuzzyMatches,
   matches,
@@ -18,6 +19,7 @@ function queryAllByText(
     normalizer,
   } = {},
 ) {
+  container = prepareContainer(container)
   const matcher = exact ? matches : fuzzyMatches
   const matchNormalizer = makeNormalizer({collapseWhitespace, trim, normalizer})
   let baseArray = []
